@@ -1,0 +1,15 @@
+name = "WidgetsDemo"
+version = "0.1.0"
+defaultTargets = ["widgetsdemo"]
+
+[[lean_lib]]
+name = "WidgetsDemo"
+
+[[require]]
+name = "proofwidgets"
+scope = "leanprover-community"
+rev = "v0.0.55"
+
+[[require]]
+name = "lean-slides"
+scope = "0art0"
