@@ -95,7 +95,7 @@ deriving ToJson, FromJson
 
 @[widget_module]
 def TermDisplayWidget : Component TermDisplayWidgetProps where
-    javascript := include_str "widget" / "dist" / "TermDisplayWidget.js"
+    javascript := include_str "widget" / "dist" / "termDisplayWidget.js"
 
 def exampleProps : TermDisplayWidgetProps := {term := "Nat", type := "Type"}
 
@@ -193,14 +193,14 @@ def TermDisplayWidgetRemote : Component TermDisplayWidgetRemoteProps where
   javascript := include_str "widget" / "dist" / "termDisplayWidgetRemote.js"
 
 #html show CoreM _ from
-  return <TermDisplayWidgetRemote name={``Nat.add} env={⟨← getEnv⟩} />
+  return <TermDisplayWidgetRemote name={``Nat.add} env={← WithRpcRef.mk (← getEnv)} />
 
 @[widget_module]
 def TermDisplayLeanRPCWidget : Component TermDisplayWidgetRemoteProps :=
   mk_rpc_widget% TermDisplayWidgetRemote.rpc
 
 #html show CoreM _ from
-  return <TermDisplayLeanRPCWidget name={``Nat.add} env={⟨← getEnv⟩} />
+  return <TermDisplayLeanRPCWidget name={``Nat.add} env={← WithRpcRef.mk (← getEnv)} />
 
 #slides PanelWidgets /-!
 
