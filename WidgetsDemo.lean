@@ -85,6 +85,8 @@ There are two parts to a widget in Lean:
 
 -/
 
+#html <iframe src={"https://react.dev/learn"} width="100%" height="600px" />
+
 section FullWidgetExample
 
 structure TermDisplayWidgetProps where
@@ -113,7 +115,7 @@ elab stx:"#term_info" term:str ":" type:str : command => Command.runTermElabM fu
 end FullWidgetExample
 
 
-#slides +draft HtmlWidgets /-!
+#slides HtmlWidgets /-!
 
 - Defining widgets using JavaScript code each time can get tedious.
 
@@ -153,6 +155,8 @@ def termDisplay (props : TermDisplayWidgetProps) : Html :=
           </div>
         </div>
 
+#html termDisplay { term := "Nat", type := "Type" }
+
 end HtmlWidgetExample
 
 #slides RPC /-!
@@ -163,7 +167,7 @@ end HtmlWidgetExample
 
 ---
 
-- The `mk_rpc_widget%` elaborator can be used to conveniently define widgets out of server RPC methods that return Html objects as output.
+- The `mk_rpc_widget%` elaborator can be used to conveniently define widgets out of server RPC methods that return `Html` objects as output.
 
 -/
 
@@ -202,9 +206,48 @@ def TermDisplayLeanRPCWidget : Component TermDisplayWidgetRemoteProps :=
 #html show CoreM _ from
   return <TermDisplayLeanRPCWidget name={``Nat.add} env={← WithRpcRef.mk (← getEnv)} />
 
+elab stx:"#widget_check" t:ident : command => Command.runTermElabM fun _ ↦ do
+  let env ← getEnv
+  let envRef ← WithRpcRef.mk env
+  Widget.savePanelWidgetInfo
+    (hash := TermDisplayLeanRPCWidget.javascriptHash)
+    (props := do rpcEncode (α := TermDisplayWidgetRemoteProps) { name := t.getId, env := envRef })
+    stx
+
+#widget_check Nat.add
+
+section TextReplacementWidget
+
+structure TextReplacementWidgetProps where
+  text : String
+  replacementRange : Lsp.Range
+deriving Server.RpcEncodable
+
+@[server_rpc_method]
+def TextReplacementWidget.rpc (props : TextReplacementWidgetProps) : RequestM (RequestTask Html) := RequestM.asTask do
+  let editLinkProps : MakeEditLinkProps := .ofReplaceRange' (← RequestM.readDoc).meta props.replacementRange props.text none
+  return <div><p>Click to insert the text into the editor</p>{.ofComponent MakeEditLink editLinkProps #[<p>Click here</p>]}</div>
+
+@[widget_module]
+def TextReplacementWidget : Component TextReplacementWidgetProps :=
+  mk_rpc_widget% TextReplacementWidget.rpc
+
+elab "#self_replace" txt:str : command => Command.runTermElabM fun _ ↦ do
+  let stx ← getRef
+  let some range := (← getFileMap).lspRangeOfStx? stx | return
+  Widget.savePanelWidgetInfo TextReplacementWidget.javascriptHash
+    (props := return json%{text: $(txt.getString), replacementRange: $(range)})
+    stx
+
+#self_replace "#eval \"Hello!\""
+
+end TextReplacementWidget
+
 #slides PanelWidgets /-!
 
-# Panel widgets
+## Panel widgets
+
+- Panel widgets react to selections made in the proof state displayed in the infoview.
 
 -/
 
@@ -221,6 +264,8 @@ def ExamplePanelWidget.rpc (props : PanelWidgetProps) : RequestM (RequestTask Ht
 @[widget_module]
 def ExamplePanelWidget : Component PanelWidgetProps :=
   mk_rpc_widget% ExamplePanelWidget.rpc
+
+-- show_panel_widgets [ExamplePanelWidget]
 
 example (h : 1 + 1 = 2) : 2 + 2 = 4 := by
   with_panel_widgets [ExamplePanelWidget]
