@@ -10,6 +10,9 @@ open Lean Elab ProofWidgets Server Jsx Json
 
 #set_pandoc_options "-V" "revealjs-url=https://unpkg.com/reveal.js@5.2.0"
 
+elab "#slides" nm:ident doc:Parser.Command.moduleDoc : command =>
+  pure ()
+
 #slides Intro /-!
 
 # What are widgets?
