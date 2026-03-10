@@ -81,4 +81,8 @@ target widgetJsAll pkg : Array FilePath :=
 target widgetJsAllDev pkg : Array FilePath :=
   widgetJsAllTarget pkg (isDev := true)
 
+@[default_target]
+lean_lib WidgetsDemo where
+  needs := #[widgetJsAll]
+
 end ProofWidgets
