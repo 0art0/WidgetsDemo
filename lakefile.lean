@@ -4,7 +4,7 @@ open Lake DSL System
 
 package WidgetsDemo
 
-require "leanprover-community" / "proofwidgets" @ git "v0.0.77"
+require "leanprover-community" / "proofwidgets" @ git "v0.0.92"
 
 require "0art0" / "lean-slides"
 
