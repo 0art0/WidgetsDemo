@@ -28,7 +28,8 @@ def interactiveGraphBuilder : IO Html := do
   let vertices : IO.Ref (Array Vertex) ← IO.mkRef #[]
   let edges : IO.Ref (Array Edge) ← IO.mkRef #[]
   let vertexId : IO.Ref String ← IO.mkRef ""
-  let edgeSourceIdx : IO.Ref (Option Nat) ← IO.mkRef none
+  let edgeSourceIdx? : IO.Ref (Option Nat) ← IO.mkRef none
+  let edgeTargetIdx? : IO.Ref (Option Nat) ← IO.mkRef none
 
   createStatefulHtml <| return <div>
     <h2>Interactive Graph Builder</h2>
@@ -46,9 +47,24 @@ def interactiveGraphBuilder : IO Html := do
     </div>
     <div>
       <span>Source vertex</span>
-      -- <Dropdown
-      --   options={(← vertices.get).map .id}
-
+      <Dropdown
+        options={(← vertices.get).map Vertex.id}
+        selectedIndex={← edgeSourceIdx?.get}
+        onChange={← asEventRef <| edgeSourceIdx?.set ∘ .some} />
+      <span>Target vertex</span>
+      <Dropdown
+        options={(← vertices.get).map Vertex.id}
+        selectedIndex={← edgeTargetIdx?.get}
+        onChange={← asEventRef <| edgeTargetIdx?.set ∘ .some} />
+      <Button onClick={← asEventRef fun () ↦ do
+        let vertices ← vertices.get
+        let source? := if let some sourceIdx := (← edgeSourceIdx?.get) then vertices[sourceIdx]? else none
+        let target? := if let some targetIdx := (← edgeTargetIdx?.get) then vertices[targetIdx]? else none
+        let edge? : Option Edge :=
+          return { source := (← source?).id, target := (← target?).id }
+        if let some edge := edge? then
+          edges.modify (.push (v := edge))
+      }>Add edge</Button>
     </div>
   </div>
 
@@ -133,5 +149,7 @@ def buildConstantsTrie {M} [Monad M] [MonadEnv M] : M (Trie ConstantInfo) := do
       trie
     else
       trie.insertName name constInfo
+
+
 
 end InteractiveCheck
