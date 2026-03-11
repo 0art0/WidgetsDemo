@@ -32,7 +32,7 @@ def StatefulHtml.rpc (props : StatefulHtmlProps) : RequestM (RequestTask Html) :
 
 @[widget_module]
 def StatefulHtml : Component StatefulHtmlProps where
-  javascript := include_str ".." / "widget" / "dist" / "statefulHtml.js"
+  javascript := include_str ".." / ".lake" / "build" / "js" / "statefulHtml.js"
   «export» := "default"
 
 def createStatefulHtml (html : RequestM Html) : BaseIO Html := do
@@ -50,7 +50,7 @@ def Button.rpc (props : ButtonProps) : RequestM (RequestTask Unit) := do
 
 @[widget_module]
 def Button : Component ButtonProps where
-  javascript := include_str ".." / "widget" / "dist" / "statefulHtml.js"
+  javascript := include_str ".." / ".lake" / "build" / "js" / "statefulHtml.js"
   «export» := "Button"
 
 structure HoverProps where
@@ -69,7 +69,7 @@ def Hover.onMouseLeave.rpc (props : HoverProps) : RequestM (RequestTask Unit) :=
 
 @[widget_module]
 def Hover : Component HoverProps where
-  javascript := include_str ".." / "widget" / "dist" / "statefulHtml.js"
+  javascript := include_str ".." / ".lake" / "build" / "js" / "statefulHtml.js"
   «export» := "Hover"
 
 structure TextInputProps where
@@ -86,7 +86,7 @@ def TextInput.rpc (props : TextInputProps) : RequestM (RequestTask Unit) := do
 
 @[widget_module]
 def TextInput : Component TextInputProps where
-  javascript := include_str ".." / "widget" / "dist" / "statefulHtml.js"
+  javascript := include_str ".." / ".lake" / "build" / "js" / "statefulHtml.js"
   «export» := "TextInput"
 
 structure NumberInputProps where
@@ -107,7 +107,7 @@ def NumberInput.rpc (props : NumberInputProps) : RequestM (RequestTask Unit) := 
 
 @[widget_module]
 def NumberInput : Component NumberInputProps where
-  javascript := include_str ".." / "widget" / "dist" / "statefulHtml.js"
+  javascript := include_str ".." / ".lake" / "build" / "js" / "statefulHtml.js"
   «export» := "NumberInput"
 
 structure CheckboxProps where
@@ -122,7 +122,7 @@ def Checkbox.rpc (props : CheckboxProps) : RequestM (RequestTask Unit) := do
 
 @[widget_module]
 def Checkbox : Component CheckboxProps where
-  javascript := include_str ".." / "widget" / "dist" / "statefulHtml.js"
+  javascript := include_str ".." / ".lake" / "build" / "js" / "statefulHtml.js"
   «export» := "Checkbox"
 
 structure DropdownProps where
@@ -140,7 +140,7 @@ def Dropdown.rpc (props : DropdownProps) : RequestM (RequestTask Unit) := do
 
 @[widget_module]
 def Dropdown : Component DropdownProps where
-  javascript := include_str ".." / "widget" / "dist" / "statefulHtml.js"
+  javascript := include_str ".." / ".lake" / "build" / "js" / "statefulHtml.js"
   «export» := "Dropdown"
 
 structure RadioButtonProps where
@@ -159,7 +159,7 @@ def RadioButton.rpc (props : RadioButtonProps) : RequestM (RequestTask Unit) := 
 
 @[widget_module]
 def RadioButton : Component RadioButtonProps where
-  javascript := include_str ".." / "widget" / "dist" / "statefulHtml.js"
+  javascript := include_str ".." / ".lake" / "build" / "js" / "statefulHtml.js"
   «export» := "RadioButton"
 
 structure SliderProps where
@@ -176,5 +176,5 @@ def Slider.rpc (props : SliderProps) : RequestM (RequestTask Unit) := do
 
 @[widget_module]
 def Slider : Component SliderProps where
-  javascript := include_str ".." / "widget" / "dist" / "statefulHtml.js"
+  javascript := include_str ".." / ".lake" / "build" / "js" / "statefulHtml.js"
   «export» := "Slider"
