@@ -22,6 +22,9 @@ instance : TypeName NumberToRequestMUnit := unsafe .mk NumberToRequestMUnit ``Nu
 
 deriving instance ToJson, FromJson for PUnit
 
+def handleEvent {α β : Type} (event : α → RequestM β) : BaseIO (WithRpcRef (α → RequestM (RequestTask β))) :=
+  WithRpcRef.mk fun a ↦ RequestM.asTask (event a)
+
 structure StatefulHtmlProps where
   html : WithRpcRef RequestMHtml
 deriving RpcEncodable
