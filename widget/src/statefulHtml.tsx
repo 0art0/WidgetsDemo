@@ -3,28 +3,26 @@ import { useRpcSession, RpcPtr, DocumentPosition } from "@leanprover/infoview"
 import { Html, renderHtml } from "./htmlDisplay"
 
 interface ButtonProps {
-  // content: Html
-  onClick: RpcPtr<'RequestMUnit'>
+  onClick: RpcPtr<'RequestMRequestTaskUnit'>
   style?: React.CSSProperties
-  // pos: DocumentPosition
 }
 
 interface HoverProps {
-  onMouseEnter: RpcPtr<'RequestMUnit'>
-  onMouseLeave: RpcPtr<'RequestMUnit'>
+  onMouseEnter: RpcPtr<'RequestMRequestTaskUnit'>
+  onMouseLeave: RpcPtr<'RequestMRequestTaskUnit'>
   style?: React.CSSProperties
 }
 
 interface TextInputProps {
   placeholder: string
-  onChange: RpcPtr<'StringToRequestMUnit'>
+  onChange: RpcPtr<'StringToRequestMRequestTaskUnit'>
   value: string
   style?: React.CSSProperties
 }
 
 interface NumberInputProps {
   placeholder: string
-  onChange: RpcPtr<'NumberToRequestMUnit'>
+  onChange: RpcPtr<'NumberToRequestMRequestTaskUnit'>
   value?: number
   max?: number
   min?: number
@@ -34,35 +32,35 @@ interface NumberInputProps {
 
 interface CheckboxProps {
   checked: boolean
-  onChange: RpcPtr<'BooleanToRequestMUnit'>
+  onChange: RpcPtr<'BooleanToRequestMRequestTaskUnit'>
   style?: React.CSSProperties
 }
 
 interface DropdownProps {
   options: string[]
   selectedIndex?: number
-  onChange: RpcPtr<'NumberToRequestMUnit'>
+  onChange: RpcPtr<'NumberToRequestMRequestTaskUnit'>
   style?: React.CSSProperties
 }
 
 interface RadioButtonProps {
   options: string[]
   selectedIndex?: number
-  onChange: RpcPtr<'NumberToRequestMUnit'>
+  onChange: RpcPtr<'NumberToRequestMRequestTaskUnit'>
   name: string
   style?: React.CSSProperties
 }
 
 interface SliderProps {
   value: number
-  onChange: RpcPtr<'NumberToRequestMUnit'>
+  onChange: RpcPtr<'NumberToRequestMRequestTaskUnit'>
   min?: number
   max?: number
   style?: React.CSSProperties
 }
 
 interface StatefulHtmlProps {
-  html: RpcPtr<'RequestMHtml'>
+  html: RpcPtr<'RequestMRequestTaskHtml'>
   pos: DocumentPosition
 }
 
@@ -89,11 +87,6 @@ const InteractionDispatchContext = React.createContext<React.Dispatch<Interactio
 export function Button(props: React.PropsWithChildren<ButtonProps>): JSX.Element {
   const rs = useRpcSession()
   const interactionDispatch = React.useContext(InteractionDispatchContext)
-  // const [renderedContent, setRenderedContent] = React.useState<JSX.Element>(<></>)
-
-  // React.useEffect(() => {
-  //   renderHtml(rs, props.pos, props.content).then(setRenderedContent)
-  // }, [props.content, props.pos, rs])
 
   const onClick = async () => {
     await rs.call<ButtonProps, null>(
@@ -188,7 +181,7 @@ export function NumberInput(props: NumberInputProps): JSX.Element {
   <div>
     <input
       type="number"
-      value={props.value ?? undefined}
+      value={props.value}
       placeholder={props.placeholder}
       onChange={onChange}
       max={props.max}
@@ -237,7 +230,7 @@ export function Dropdown(props: DropdownProps): JSX.Element {
   }
   return (
     <select
-      value={props.selectedIndex ?? 0}
+      value={props.selectedIndex}
       onChange={onChange}
       style={props.style}
     >
@@ -271,7 +264,7 @@ export function RadioButton(props: RadioButtonProps): JSX.Element {
             type="radio"
             name={props.name}
             value={index}
-            checked={(props.selectedIndex ?? 0) === index}
+            checked={props.selectedIndex === index}
             onChange={onChange}
           />
           {option}
