@@ -63,7 +63,7 @@ export function TextInput(props) {
             console.error("Error changing text input:", e);
         });
     };
-    return (_jsxs("div", { children: [props.label && _jsx("label", { children: props.label }), _jsx("input", { type: "text", value: props.value, placeholder: props.placeholder, onChange: onChange, style: props.style })] }));
+    return (_jsx("div", { children: _jsx("input", { type: "text", value: props.value, placeholder: props.placeholder, onChange: onChange, style: props.style }) }));
 }
 export function NumberInput(props) {
     const rs = useRpcSession();

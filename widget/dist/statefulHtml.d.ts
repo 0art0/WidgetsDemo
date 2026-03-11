@@ -10,7 +10,6 @@ interface HoverProps {
     style?: React.CSSProperties;
 }
 interface TextInputProps {
-    label?: string;
     placeholder: string;
     onChange: RpcPtr<'StringToRequestMUnit'>;
     value: string;

@@ -16,7 +16,6 @@ interface HoverProps {
 }
 
 interface TextInputProps {
-  label?: string
   placeholder: string
   onChange: RpcPtr<'StringToRequestMUnit'>
   value: string
@@ -162,7 +161,6 @@ export function TextInput(props: TextInputProps): JSX.Element {
   }
   return (
   <div>
-    {props.label && <label>{props.label}</label>}
     <input
       type="text"
       value={props.value}

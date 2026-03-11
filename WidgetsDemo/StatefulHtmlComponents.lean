@@ -73,7 +73,6 @@ def Hover : Component HoverProps where
   «export» := "Hover"
 
 structure TextInputProps where
-  label : Option String := none
   placeholder : String := ""
   onChange : WithRpcRef (String → RequestM (RequestTask Unit))
   value : String := ""
