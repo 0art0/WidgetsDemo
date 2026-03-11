@@ -1,4 +1,8 @@
-import WidgetsDemo.StatefulHtmlComponents
+module
+
+public import WidgetsDemo.StatefulHtmlComponents
+
+public meta section
 
 open Lean ProofWidgets Server Jsx Elab Command
 

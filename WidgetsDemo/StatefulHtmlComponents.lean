@@ -1,4 +1,9 @@
-import ProofWidgets
+module
+
+public import Lean.Server.Requests
+public import ProofWidgets
+
+public meta section
 
 open Lean ProofWidgets Server Jsx Elab Command
 
