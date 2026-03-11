@@ -1,23 +1,23 @@
 import React from "react";
 import { RpcPtr, DocumentPosition } from "@leanprover/infoview";
 interface ButtonProps {
-    onClick: RpcPtr<'RequestMUnit'>;
+    onClick: RpcPtr<'RequestMRequestTaskUnit'>;
     style?: React.CSSProperties;
 }
 interface HoverProps {
-    onMouseEnter: RpcPtr<'RequestMUnit'>;
-    onMouseLeave: RpcPtr<'RequestMUnit'>;
+    onMouseEnter: RpcPtr<'RequestMRequestTaskUnit'>;
+    onMouseLeave: RpcPtr<'RequestMRequestTaskUnit'>;
     style?: React.CSSProperties;
 }
 interface TextInputProps {
     placeholder: string;
-    onChange: RpcPtr<'StringToRequestMUnit'>;
+    onChange: RpcPtr<'StringToRequestMRequestTaskUnit'>;
     value: string;
     style?: React.CSSProperties;
 }
 interface NumberInputProps {
     placeholder: string;
-    onChange: RpcPtr<'NumberToRequestMUnit'>;
+    onChange: RpcPtr<'NumberToRequestMRequestTaskUnit'>;
     value?: number;
     max?: number;
     min?: number;
@@ -26,31 +26,31 @@ interface NumberInputProps {
 }
 interface CheckboxProps {
     checked: boolean;
-    onChange: RpcPtr<'BooleanToRequestMUnit'>;
+    onChange: RpcPtr<'BooleanToRequestMRequestTaskUnit'>;
     style?: React.CSSProperties;
 }
 interface DropdownProps {
     options: string[];
     selectedIndex?: number;
-    onChange: RpcPtr<'NumberToRequestMUnit'>;
+    onChange: RpcPtr<'NumberToRequestMRequestTaskUnit'>;
     style?: React.CSSProperties;
 }
 interface RadioButtonProps {
     options: string[];
     selectedIndex?: number;
-    onChange: RpcPtr<'NumberToRequestMUnit'>;
+    onChange: RpcPtr<'NumberToRequestMRequestTaskUnit'>;
     name: string;
     style?: React.CSSProperties;
 }
 interface SliderProps {
     value: number;
-    onChange: RpcPtr<'NumberToRequestMUnit'>;
+    onChange: RpcPtr<'NumberToRequestMRequestTaskUnit'>;
     min?: number;
     max?: number;
     style?: React.CSSProperties;
 }
 interface StatefulHtmlProps {
-    html: RpcPtr<'RequestMHtml'>;
+    html: RpcPtr<'RequestMRequestTaskHtml'>;
     pos: DocumentPosition;
 }
 export declare function Button(props: React.PropsWithChildren<ButtonProps>): JSX.Element;

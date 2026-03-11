@@ -10,10 +10,6 @@ const InteractionDispatchContext = React.createContext(null);
 export function Button(props) {
     const rs = useRpcSession();
     const interactionDispatch = React.useContext(InteractionDispatchContext);
-    // const [renderedContent, setRenderedContent] = React.useState<JSX.Element>(<></>)
-    // React.useEffect(() => {
-    //   renderHtml(rs, props.pos, props.content).then(setRenderedContent)
-    // }, [props.content, props.pos, rs])
     const onClick = async () => {
         await rs.call("Button.rpc", { onClick: props.onClick, style: props.style })
             .then(() => {
@@ -76,7 +72,7 @@ export function NumberInput(props) {
             console.error("Error changing number input:", e);
         });
     };
-    return (_jsx("div", { children: _jsx("input", { type: "number", value: props.value ?? undefined, placeholder: props.placeholder, onChange: onChange, max: props.max, min: props.min, width: props.width, style: props.style }) }));
+    return (_jsx("div", { children: _jsx("input", { type: "number", value: props.value, placeholder: props.placeholder, onChange: onChange, max: props.max, min: props.min, width: props.width, style: props.style }) }));
 }
 export function Checkbox(props) {
     const rs = useRpcSession();
@@ -102,7 +98,7 @@ export function Dropdown(props) {
             console.error("Error changing dropdown:", e);
         });
     };
-    return (_jsx("select", { value: props.selectedIndex ?? 0, onChange: onChange, style: props.style, children: props.options.map((option, index) => (_jsx("option", { value: index, children: option }, index))) }));
+    return (_jsx("select", { value: props.selectedIndex, onChange: onChange, style: props.style, children: props.options.map((option, index) => (_jsx("option", { value: index, children: option }, index))) }));
 }
 export function RadioButton(props) {
     const rs = useRpcSession();
@@ -115,7 +111,7 @@ export function RadioButton(props) {
             console.error("Error changing radio button:", e);
         });
     };
-    return (_jsx("div", { style: props.style, children: props.options.map((option, index) => (_jsxs("label", { style: { display: 'block' }, children: [_jsx("input", { type: "radio", name: props.name, value: index, checked: (props.selectedIndex ?? 0) === index, onChange: onChange }), option] }, index))) }));
+    return (_jsx("div", { style: props.style, children: props.options.map((option, index) => (_jsxs("label", { style: { display: 'block' }, children: [_jsx("input", { type: "radio", name: props.name, value: index, checked: props.selectedIndex === index, onChange: onChange }), option] }, index))) }));
 }
 export function Slider(props) {
     const rs = useRpcSession();
