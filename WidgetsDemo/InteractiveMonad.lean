@@ -54,6 +54,14 @@ def askBool (question : String) : InteractiveT BaseIO Bool := fun htmlRef k ↦ 
       <Button onClick={← asEventRef fun () ↦ k false}>No</Button>
     </div>
 
+-- TODO: add a version that takes in an array of choices and labels
+def askChoices (question : String) (choices : Array α) [ToString α] : InteractiveT BaseIO α := fun htmlRef k ↦ do
+  htmlRef.set <|
+    <div>
+      <p>{.text question}</p>
+      {.element "div" #[] <| ← choices.mapM (fun choice ↦ return <Button onClick={← asEventRef fun () ↦ k choice}>{.text (toString choice)}</Button>)}
+    </div>
+
 def askString (question : String) : InteractiveT BaseIO String := fun htmlRef k ↦ do
   htmlRef.set <|
     <TextSubmitBox
