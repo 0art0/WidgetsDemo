@@ -253,11 +253,6 @@ where
 
 #html interactiveGraphBuilder
 
-#slides Working /-!
-
-
--/
-
 #html show MetaM Html from do
   let library ← buildConstantsTrie
   let constName : IO.Ref String ← IO.mkRef ""
@@ -283,9 +278,22 @@ where
     </div>
   )
 
+#slides Working /-!
+
+# Implementing stateful widgets in Lean
+
+Roughly, stateful widgets work in the following way:
+
+- The state is represented by a mutable `Ref` on the Lean side. In particular, this means the state can be arbitrary Lean data
+- Effects are represented by functions wrapped in `WithRpcRef`, which allows JavaScript code to provide them back to Lean to run at the appropriate time
+- Each of the custom components `Button`, `TextInput`, `Slider`, etc., is configured to send out a signal that the `StatefulHtml` component picks up and triggers its re-render.
+
+-/
+
 #html show BaseIO Html from do
   let count ← IO.mkRef 0
-  createStatefulHtml <| return (
+  return (
+    <StatefulHtml html={← WithRpcRef.mk <| return (
     <div>
       <Button onClick={← WithRpcRef.mk
         (fun _ ↦ RequestM.asTask do count.modify (· + 1))}>
@@ -293,7 +301,8 @@ where
       </Button>
       <p>Count: {.text s!"{← count.get}"}</p>
     </div>
-)
+    )} />
+  )
 
 def applyEdit (edit : Lsp.TextEdit) : RequestM (RequestTask Unit) := do
   return (← ServerTask.mapCheap (handleServerResponse (α := Unit)) <$>
@@ -306,13 +315,16 @@ where
     | .success res => .ok res
     | .failure code message => .error { code, message }
 
-#check 1 + 1
+
+
+
+
 
 #html show IO Html from do
   return <Button onClick={← WithRpcRef.mk <| fun _ ↦ applyEdit {
     newText := "#check 1 + 1",
-    range := { start := { line := 250, character := 0 },
-                «end» := { line := 250, character := 0 } } }}>
+    range := { start := { line := 320, character := 0 },
+                «end» := { line := 320, character := 0 } } }}>
       Click to insert a command into the editor
     </Button>
 
@@ -320,7 +332,9 @@ where
 
 ## Multiple-turn interactions
 
-## The `InteractiveM` monad
+In addition to the kinds of widgets demonstrated above, it would be nice to have a
+monadic style of programming user-interactions to iteratively and interactively construct pieces
+of data in Lean.
 
 ## Acknowledgements
 
@@ -330,7 +344,14 @@ In the context of this work, acknowledgements are due to
 - Mirek Olšák, for implementing a prototype of the `InteractiveM` monad using different underlying principles
 - Siddharth Bhat, for pointing me to the "Continuation monad" and helping with prototyping the initial version of the monad
 
+## The `InteractiveM` monad
+
+The `InteractiveM` monad uses the continuation monad behind the scenes to construct a
+nested HTML structure that keeps track of the sequence of user interactions that is to be performed.
+
 -/
+
+#check InteractiveT
 
 #html InteractiveT.run (m := BaseIO) do
   createButton "Click me!"
@@ -346,5 +367,14 @@ In the context of this work, acknowledgements are due to
 #slides Conclusion /-!
 
 ## Future work
+
+- The demos shown so far should in principle be compatible with arbitrary monads that extend `IO`, but currently are designed only for `IO`.
+- Once the code is stable enough, the plan is to PR it to `ProofWidgets`.
+
+## Conclusion
+
+- Being able to conveniently define not just pure graphical components, but also ones that implement state and effects entirely from within Lean, will hopefully open up more opportunities for using widgets in Mathlib.
+
+- The eventual goal is to use this framework to assist in building a suite of interactive graphical components that show up in the infoview in response to user selections in the tactic state that tactic writers can add their own widgets to.
 
 -/
