@@ -166,40 +166,90 @@ def interactiveGraphBuilder : IO Html := do
   let edgeSourceIdx? : IO.Ref (Option Nat) ← IO.mkRef none
   let edgeTargetIdx? : IO.Ref (Option Nat) ← IO.mkRef none
   createStatefulHtml <| return <div>
-    <h2>Interactive Graph Builder</h2>
-    <GraphDisplay vertices={← vertices.get} edges={← edges.get} />
-    <hr />
-    <div>
+    <div style={cardStyle}>
+      <div>
+        <h2 style={json% {margin: "0 0 4px 0", color: "#0f172a"}}>Interactive Graph Builder</h2>
+        <p style={hintStyle}>Add vertices and connect them with edges.</p>
+        <p style={hintStyle}>Vertices: {.text s!"{(← vertices.get).size}"} | Edges: {.text s!"{(← edges.get).size}"}</p>
+      </div>
+      <div style={graphPanelStyle}>
+        <GraphDisplay vertices={← vertices.get} edges={← edges.get} />
+      </div>
+      <div style={controlsStyle}>
+        <div style={rowStyle}>
+          <span style={labelStyle}>Add a vertex</span>
       <TextInput
         placeholder="Enter a name for a new vertex"
         value={← vertexId.get}
         onChange={← asEventRef vertexId.set} />
-      <Button onClick={← asEventRef fun () ↦ do
-        vertices.modify (.push (v := { id := (← vertexId.get) }))
-        vertexId.set ""
-      }>Add vertex</Button>
-    </div>
-    <div>
-      <span>Source vertex</span>
-      <Dropdown
-        options={(← vertices.get).map Vertex.id}
-        selectedIndex={← edgeSourceIdx?.get}
-        onChange={← asEventRef <| edgeSourceIdx?.set ∘ .some} />
-      <span>Target vertex</span>
-      <Dropdown
-        options={(← vertices.get).map Vertex.id}
-        selectedIndex={← edgeTargetIdx?.get}
-        onChange={← asEventRef <| edgeTargetIdx?.set ∘ .some} />
-      <Button onClick={← asEventRef fun () ↦ do
-        let vertices ← vertices.get
-        let source? := if let some sourceIdx := (← edgeSourceIdx?.get) then vertices[sourceIdx]? else none
-        let target? := if let some targetIdx := (← edgeTargetIdx?.get) then vertices[targetIdx]? else none
-        let edge? : Option Edge := return { source := (← source?).id, target := (← target?).id }
-        if let some edge := edge? then
-          edges.modify (.push (v := edge))
-      }>Add edge</Button>
+          <Button onClick={← asEventRef fun () ↦ do
+            vertices.modify (.push (v := { id := (← vertexId.get) }))
+            vertexId.set ""
+          }>Add vertex</Button>
+        </div>
+        <div style={rowStyle}>
+          <span style={labelStyle}>Connect two vertices</span>
+          <span style={hintStyle}>Source vertex</span>
+          <Dropdown
+            options={(← vertices.get).map Vertex.id}
+            selectedIndex={← edgeSourceIdx?.get}
+            onChange={← asEventRef <| edgeSourceIdx?.set ∘ .some} />
+          <span style={hintStyle}>Target vertex</span>
+          <Dropdown
+            options={(← vertices.get).map Vertex.id}
+            selectedIndex={← edgeTargetIdx?.get}
+            onChange={← asEventRef <| edgeTargetIdx?.set ∘ .some} />
+          <Button onClick={← asEventRef fun () ↦ do
+            let vertices ← vertices.get
+            let source? := if let some sourceIdx := (← edgeSourceIdx?.get) then vertices[sourceIdx]? else none
+            let target? := if let some targetIdx := (← edgeTargetIdx?.get) then vertices[targetIdx]? else none
+            let edge? : Option Edge := return { source := (← source?).id, target := (← target?).id }
+            if let some edge := edge? then
+              edges.modify (.push (v := edge))
+          }>Add edge</Button>
+        </div>
+      </div>
     </div>
   </div>
+where
+  cardStyle : Json := json% {
+    border: "1px solid #d7dde8",
+    borderRadius: "16px",
+    padding: "18px",
+    background: "linear-gradient(180deg, #fafcff 0%, #f3f7fb 100%)",
+    boxShadow: "0 10px 24px rgba(15, 23, 42, 0.08)",
+    display: "grid",
+    gap: "16px"
+  }
+  graphPanelStyle : Json := json% {
+    padding: "14px",
+    borderRadius: "12px",
+    background: "#ffffff",
+    border: "1px solid #e5eaf1"
+  }
+  controlsStyle : Json := json% {
+    display: "grid",
+    gap: "12px"
+  }
+  rowStyle : Json := json% {
+    display: "grid",
+    gap: "8px",
+    padding: "12px",
+    borderRadius: "12px",
+    background: "rgba(255, 255, 255, 0.9)",
+    border: "1px solid #e5eaf1"
+  }
+  labelStyle : Json := json% {
+    fontSize: "0.9rem",
+    fontWeight: "600",
+    color: "#334155"
+  }
+  hintStyle : Json := json% {
+    fontSize: "0.9rem",
+    color: "#64748b",
+    margin: "0"
+  }
+
 
 #html interactiveGraphBuilder
 
@@ -281,6 +331,17 @@ In the context of this work, acknowledgements are due to
 - Siddharth Bhat, for pointing me to the "Continuation monad" and helping with prototyping the initial version of the monad
 
 -/
+
+#html InteractiveT.run (m := BaseIO) do
+  createButton "Click me!"
+  createButton "Click me again"
+  if (← askBool "Would you like to continue?") then
+    let name ← askString "Choose the next button label"
+    createButton name
+    let language ← askChoices "What is your favorite programming language?" #["Lean"]
+    createHtml <| <p>Great choice! {.text language} is indeed a great language.</p>
+  else
+    createHtml <| <p>Goodbye!</p>
 
 #slides Conclusion /-!
 
