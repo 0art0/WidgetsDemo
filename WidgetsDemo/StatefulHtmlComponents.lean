@@ -96,6 +96,32 @@ def TextInput : Component TextInputProps where
   javascript := include_str ".." / ".lake" / "build" / "js" / "statefulHtml.js"
   «export» := "TextInput"
 
+structure TextSubmitBoxProps where
+  placeholder : String := ""
+  onSubmit : WithRpcRef (String → RequestM (RequestTask Unit))
+  textInputStyle : Option Json := none
+  submitButtonStyle : Option Json := none
+deriving RpcEncodable
+
+@[server_rpc_method]
+def TextSubmitBox.rpc (props : TextSubmitBoxProps) : RequestM (RequestTask Html) := RequestM.asTask do
+  let value : IO.Ref String ← IO.mkRef ""
+  createStatefulHtml <| return <div>
+    <TextInput
+      placeholder={props.placeholder}
+      value={← value.get}
+      style={props.textInputStyle}
+      onChange={← asEventRef value.set} />
+    <p>{.text <| ← value.get}</p>
+    <Button onClick={← WithRpcRef.mk fun () ↦ do props.onSubmit.val (← value.get)}>Submit</Button>
+  </div>
+
+@[widget_module]
+def TextSubmitBox : Component TextSubmitBoxProps :=
+  mk_rpc_widget% TextSubmitBox.rpc
+
+#html show MetaM _ from return <TextSubmitBox placeholder={"Hello"} onSubmit={← WithRpcRef.mk fun _ ↦ RequestM.asTask (pure ())} />
+
 structure NumberInputProps where
   placeholder : String := ""
   onChange : WithRpcRef (Nat → RequestM (RequestTask Unit))
