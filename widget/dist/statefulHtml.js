@@ -1,5 +1,5 @@
 import { jsx as _jsx, jsxs as _jsxs, Fragment as _Fragment } from "react/jsx-runtime";
-import React from "react";
+import React, { useState } from "react";
 import { useRpcSession } from "@leanprover/infoview";
 import { renderHtml } from "./htmlDisplay";
 function updateInteractionState(state, interaction) {
@@ -60,6 +60,19 @@ export function TextInput(props) {
         });
     };
     return (_jsx("div", { children: _jsx("input", { type: "text", value: props.value, placeholder: props.placeholder, onChange: onChange, style: props.style }) }));
+}
+export function TextSubmitBox(props) {
+    const rs = useRpcSession();
+    const interactionDispatch = React.useContext(InteractionDispatchContext);
+    const [query, setQuery] = useState(props.value);
+    const onSubmit = async () => {
+        await rs.call("TextSubmitBox.rpc", { ...props, value: query }).then(() => {
+            interactionDispatch?.({ type: 'TextSubmitBox', props: { ...props, value: query } });
+        }).catch((e) => {
+            console.error("Error changing text input:", e);
+        });
+    };
+    return (_jsxs("div", { children: [_jsx("input", { type: "search", value: query, placeholder: props.placeholder, onChange: (e) => setQuery(e.target.value), onKeyDown: (e) => e.key === "Enter" && onSubmit(), style: props.textInputStyle }), _jsx("button", { onClick: onSubmit, children: "Submit" })] }));
 }
 export function NumberInput(props) {
     const rs = useRpcSession();

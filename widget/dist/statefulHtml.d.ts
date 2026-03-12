@@ -15,6 +15,13 @@ interface TextInputProps {
     value: string;
     style?: React.CSSProperties;
 }
+interface TextSubmitBoxProps {
+    placeholder: string;
+    value: string;
+    onSubmit: RpcPtr<'StringToRequestMRequestTaskUnit'>;
+    textInputStyle?: React.CSSProperties;
+    submitButtonStyle?: React.CSSProperties;
+}
 interface NumberInputProps {
     placeholder: string;
     onChange: RpcPtr<'NumberToRequestMRequestTaskUnit'>;
@@ -56,6 +63,7 @@ interface StatefulHtmlProps {
 export declare function Button(props: React.PropsWithChildren<ButtonProps>): JSX.Element;
 export declare function Hover(props: React.PropsWithChildren<HoverProps>): JSX.Element;
 export declare function TextInput(props: TextInputProps): JSX.Element;
+export declare function TextSubmitBox(props: TextSubmitBoxProps): JSX.Element;
 export declare function NumberInput(props: NumberInputProps): JSX.Element;
 export declare function Checkbox(props: CheckboxProps): JSX.Element;
 export declare function Dropdown(props: DropdownProps): JSX.Element;

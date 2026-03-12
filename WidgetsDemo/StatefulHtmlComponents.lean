@@ -96,6 +96,23 @@ def TextInput : Component TextInputProps where
   javascript := include_str ".." / ".lake" / "build" / "js" / "statefulHtml.js"
   «export» := "TextInput"
 
+structure TextSubmitBoxProps where
+  placeholder : String := ""
+  value : String := ""
+  onSubmit : WithRpcRef (String → RequestM (RequestTask Unit))
+  textInputStyle : Option Json := none
+  submitButtonStyle : Option Json := none
+deriving RpcEncodable
+
+@[server_rpc_method]
+def TextSubmitBox.rpc (props : TextSubmitBoxProps) : RequestM (RequestTask Unit) := do
+  props.onSubmit.val props.value
+
+@[widget_module]
+def TextSubmitBox : Component TextSubmitBoxProps where
+  javascript := include_str ".." / ".lake" / "build" / "js" / "statefulHtml.js"
+  «export» := "TextSubmitBox"
+
 structure NumberInputProps where
   placeholder : String := ""
   onChange : WithRpcRef (Nat → RequestM (RequestTask Unit))

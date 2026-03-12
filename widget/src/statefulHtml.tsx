@@ -1,4 +1,4 @@
-import React from "react"
+import React, { useState } from "react"
 import { useRpcSession, RpcPtr, DocumentPosition } from "@leanprover/infoview"
 import { Html, renderHtml } from "./htmlDisplay"
 
@@ -18,6 +18,14 @@ interface TextInputProps {
   onChange: RpcPtr<'StringToRequestMRequestTaskUnit'>
   value: string
   style?: React.CSSProperties
+}
+
+interface TextSubmitBoxProps {
+  placeholder: string
+  value: string
+  onSubmit: RpcPtr<'StringToRequestMRequestTaskUnit'>
+  textInputStyle?: React.CSSProperties
+  submitButtonStyle?: React.CSSProperties
 }
 
 interface NumberInputProps {
@@ -68,6 +76,7 @@ type Interaction =
   | { type: 'Button', props: ButtonProps }
   | { type: 'Hover', props: HoverProps }
   | { type: 'TextInput', props: TextInputProps }
+  | { type: 'TextSubmitBox', props: TextSubmitBoxProps }
   | { type: 'NumberInput', props: NumberInputProps }
   | { type: 'CheckBox', props: CheckboxProps }
   | { type: 'Dropdown', props: DropdownProps }
@@ -161,6 +170,33 @@ export function TextInput(props: TextInputProps): JSX.Element {
       onChange={onChange}
       style={props.style}
     />
+  </div>)
+}
+
+export function TextSubmitBox(props: TextSubmitBoxProps): JSX.Element {
+  const rs = useRpcSession()
+  const interactionDispatch = React.useContext(InteractionDispatchContext)
+  const [query, setQuery] = useState(props.value)
+  const onSubmit = async () => {
+    await rs.call<TextSubmitBoxProps, null>(
+      "TextSubmitBox.rpc", { ...props, value: query }
+    ).then(() => {
+      interactionDispatch?.({ type: 'TextSubmitBox', props: { ...props, value: query } })
+  }).catch((e) => {
+      console.error("Error changing text input:", e)
+    })
+  }
+  return (
+  <div>
+    <input
+      type="search"
+      value={query}
+      placeholder={props.placeholder}
+      onChange={(e) => setQuery(e.target.value)}
+      onKeyDown={(e) => e.key === "Enter" && onSubmit()}
+      style={props.textInputStyle}
+    />
+    <button onClick={onSubmit}>Submit</button>
   </div>)
 }
 

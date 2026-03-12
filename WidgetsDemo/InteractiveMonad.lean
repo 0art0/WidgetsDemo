@@ -39,33 +39,24 @@ def InteractiveT.run {m} [Monad m] [MonadLiftT BaseIO m] (code : InteractiveT m 
   ReaderT.run code htmlRef |>.run
   createStatefulHtml htmlRef.get
 
-def createButton (label : String) : InteractiveT IO Unit := fun htmlRef k ↦ do
-  htmlRef.set <| <Button onClick={← WithRpcRef.mk (fun () ↦ RequestM.asTask do k ())}>{.text label}</Button>
+def createButton (label : String) : InteractiveT BaseIO Unit := fun htmlRef k ↦ do
+  htmlRef.set <| <Button onClick={← asEventRef fun () ↦ k ()}>{.text label}</Button>
 
-def createHtml (html : Html) : InteractiveT IO Unit := fun htmlRef k ↦ do
+def createHtml (html : Html) : InteractiveT BaseIO Unit := fun htmlRef k ↦ do
   htmlRef.set html
   k ()
 
-def askBool (question : String) : InteractiveT IO Bool := fun htmlRef k ↦ do
+def askBool (question : String) : InteractiveT BaseIO Bool := fun htmlRef k ↦ do
   htmlRef.set <|
     <div>
       <p>{.text question}</p>
-      <Button onClick={← WithRpcRef.mk (fun () ↦ RequestM.asTask do k true)}>{.text "Yes"}</Button>
-      <Button onClick={← WithRpcRef.mk (fun () ↦ RequestM.asTask do k false)}>{.text "No"}</Button>
+      <Button onClick={← asEventRef fun () ↦ k true}>Yes</Button>
+      <Button onClick={← asEventRef fun () ↦ k false}>No</Button>
     </div>
 
-def askString (question : String) : InteractiveT IO String := fun htmlRef k ↦ do
-  let result ← IO.mkRef ""
-  let value ← IO.mkRef ""
+def askString (question : String) : InteractiveT BaseIO String := fun htmlRef k ↦ do
   htmlRef.set <|
-    <div>
-      <p>{.text question}</p>
-      <TextInput
-        placeholder={← value.get}
-        value={← value.get}
-        onChange={← WithRpcRef.mk (fun newVal ↦ RequestM.asTask do value.set newVal)} />
-      <Button onClick={← WithRpcRef.mk (fun () ↦ RequestM.asTask do
-          let val ← value.get; result.set val; k val)}>
-        {.text "Submit"}
-      </Button>
-    </div>
+    <TextSubmitBox
+      placeholder={question}
+      value={""}
+      onSubmit={← asEventRef fun s ↦ k s} />
