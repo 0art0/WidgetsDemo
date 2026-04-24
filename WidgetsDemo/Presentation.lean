@@ -119,7 +119,7 @@ example [IncidenceGeometry] {a b : Point} (_hab : a ≠ b) :
   with_panel_widgets [EuclideanConstructions]
   sorry
 
-#html Plot fun (x : Float) ↦ x^2
+#html Plot fun (x : Float) ↦ x^3 + 2*x + 5
 
 def x : Nat := 0
 def y : Nat := 1
@@ -285,7 +285,13 @@ where
 Roughly, stateful widgets work in the following way:
 
 - The state is represented by a mutable `Ref` on the Lean side. In particular, this means the state can be arbitrary Lean data
+
+---
+
 - Effects are represented by functions wrapped in `WithRpcRef`, which allows JavaScript code to provide them back to Lean to run at the appropriate time
+
+---
+
 - Each of the custom components `Button`, `TextInput`, `Slider`, etc., is configured to send out a signal that the `StatefulHtml` component picks up and triggers its re-render.
 
 -/
@@ -323,8 +329,8 @@ where
 #html show IO Html from do
   return <Button onClick={← WithRpcRef.mk <| fun _ ↦ applyEdit {
     newText := "#check 1 + 1",
-    range := { start := { line := 320, character := 0 },
-                «end» := { line := 320, character := 0 } } }}>
+    range := { start := { line := 325, character := 0 },
+                «end» := { line := 325, character := 0 } } }}>
       Click to insert a command into the editor
     </Button>
 

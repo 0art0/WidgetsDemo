@@ -202,14 +202,3 @@ def Slider.rpc (props : SliderProps) : RequestM (RequestTask Unit) := do
 def Slider : Component SliderProps where
   javascript := include_str ".." / ".lake" / "build" / "js" / "statefulHtml.js"
   «export» := "Slider"
-
-def applyEdit (edit : Lsp.TextEdit) : RequestM (RequestTask Unit) := do
-  return (← ServerTask.mapCheap (handleServerResponse (α := Unit)) <$>
-    Server.RequestM.sendServerRequest Lsp.ApplyWorkspaceEditParams Unit "workspace/applyEdit"
-    { edit := .ofTextEdit
-        (Server.FileWorker.EditableDocument.versionedIdentifier (← read).doc)
-        edit })
-where
-  handleServerResponse {α} : ServerRequestResponse α → Except RequestError α := fun
-    | .success res => .ok res
-    | .failure code message => .error { code, message }
